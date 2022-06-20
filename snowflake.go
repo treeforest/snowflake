@@ -29,8 +29,8 @@ const (
 	timestampShift = sequenceBits + workeridBits      //时间戳左移位数
 )
 
-// A Snowflake struct holds the basic information needed for a snowflake generator worker
-type snowflake struct {
+// Snowflake struct holds the basic information needed for a Snowflake generator worker
+type Snowflake struct {
 	mu        sync.Mutex
 	timestamp int64
 	workerid  int64
@@ -38,12 +38,12 @@ type snowflake struct {
 }
 
 // NewSnowflake NewNode returns a new snowflake worker that can be used to generate snowflake IDs
-func NewSnowflake(workerid int64) (*snowflake, error) {
+func NewSnowflake(workerid int64) (*Snowflake, error) {
 	if workerid < 0 || workerid > workeridMax {
 		return nil, errors.New("workerid must be between 0 and 1023")
 	}
 
-	return &snowflake{
+	return &Snowflake{
 		timestamp: 0,
 		workerid:  workerid,
 		sequence:  0,
@@ -51,7 +51,7 @@ func NewSnowflake(workerid int64) (*snowflake, error) {
 }
 
 // Generate creates and returns a unique snowflake ID
-func (s *snowflake) Generate() int64 {
+func (s *Snowflake) Generate() int64 {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -81,7 +81,7 @@ func (s *snowflake) Generate() int64 {
 	return r
 }
 
-var defaultInstance *snowflake
+var defaultInstance *Snowflake
 
 func init() {
 	var err error
